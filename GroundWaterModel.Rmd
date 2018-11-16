@@ -19,6 +19,47 @@ gw_mgmt = read_csv("ESM203Assn3.csv")
 ```
 
 ```{r}
-plot()
+##Part 1: Making a regression for the outflow
+
+outflow_reg = lm(outflow~year, data=gw_mgmt)
+
+outflow_reg$fitted #this will show me the regression lines values for the points I put in. Unhelpful in this case 
+
+#now I'm going to use my model 
+
+outflow_reg$coefficients # shows my y intercept and slope
+
+#This uses the model automatically
+coef(outflow_reg)[1] #this is the intercept
+coef(outflow_reg)[2] #this is the slope
+
+coef(outflow_reg)[1]+coef(outflow_reg)[2]*2002 #example using 2002
+
+#apparently there is a neater way
+predict(outflow_reg,list(year=2002)) # for a single value
+outflow_mod = predict(outflow_reg,data.frame(year=c(2000:2050))) #this generates a new data frame using the years between 2000 and 2050.
+
+#View(outflow_mod)
 ```
 
+```{r}
+##Part 2. Making an Inflow Model 
+
+inflow_reg = lm(inflow~year, data=gw_mgmt)
+
+inflow_reg$fitted #this will show me the regression lines values for the points I put in. Unhelpful in this case 
+
+#now I'm going to use my model 
+inflow_reg$coefficients # shows my y intercept and slope
+
+#This uses the model automatically
+coef(inflow_reg)[1] #this is the intercept
+coef(inflow_reg)[2] #this is the slope
+
+coef(inflow_reg)[1]+coef(inflow_reg)[2]*2002 #example using 2002
+
+#apparently there is a neater way
+predict(inflow_reg,list(year=2002)) # for a single value
+inflow_mod = predict(inflow_reg,data.frame(year=c(2000:2050))) #this is getting exciting
+#View(inflow_mod)
+```
