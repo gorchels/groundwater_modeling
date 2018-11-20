@@ -63,3 +63,23 @@ predict(inflow_reg,list(year=2002)) # for a single value
 inflow_mod = predict(inflow_reg,data.frame(year=c(2000:2050))) #this is getting exciting
 #View(inflow_mod)
 ```
+```{r}
+mean_gw = 350
+gw_df = data.frame(matrix(ncol = 6, nrow = 51))
+x = c("year", "outflow", "inflow", "netloss", "reservoir_size", "resevoir_depletion")
+colnames(gw_df) = x
+gw_model = gw_df %>% 
+  mutate(year = 2000:2050) %>% 
+  mutate(outflow = predict(outflow_reg,data.frame(year=c(2000:2050)))) %>% 
+  mutate(inflow = predict(inflow_reg,data.frame(year=c(2000:2050)))) %>%
+  mutate(netloss = outflow-inflow) %>% 
+  mutate(reservoir_size = mean_gw) %>% 
+  mutate(resevoir_depletion = sum(netloss))
+  
+#View(gw_model)
+
+netloss_fun = (gw_model$outflow[1] + (coef(outflow_reg)[2])+coef(inflow_reg[2]))
+netloss_fun
+
+```
+
