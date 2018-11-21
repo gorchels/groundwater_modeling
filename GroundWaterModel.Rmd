@@ -1,15 +1,17 @@
 ---
-title: "ESM 203: Assignment 3"
+title: 'ESM 203: Assignment 3'
 author: "Madeline Gorchels"
 date: "11/15/2018"
-output: html_document
+output:
+  word_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r,include=FALSE}
 library(tidyverse)
 library(kableExtra)
 library(knitr)
@@ -18,7 +20,7 @@ gw_mgmt = read_csv("ESM203Assn3.csv")
 
 ```
 
-```{r}
+```{r,include=FALSE}
 ##Part 1: Making a regression for the outflow
 
 outflow_reg = lm(outflow~year, data=gw_mgmt)
@@ -42,7 +44,7 @@ outflow_mod = predict(outflow_reg,data.frame(year=c(2000:2050))) #this generates
 #View(outflow_mod)
 ```
 
-```{r}
+```{r,include=FALSE}
 ##Part 2. Making an Inflow Model 
 
 inflow_reg = lm(inflow~year, data=gw_mgmt)
@@ -63,8 +65,8 @@ predict(inflow_reg,list(year=2002)) # for a single value
 inflow_mod = predict(inflow_reg,data.frame(year=c(2000:2050))) #this is getting exciting
 #View(inflow_mod)
 ```
-```{r}
-netloss = predict(outflow_reg,data.frame(year=c(2000:2050)))- predict(inflow_reg,data.frame(year=c(2000:2050)))
+```{r, include=FALSE}
+netloss = predict(outflow_reg,data.frame(year=c(2000:2050)))-predict(inflow_reg,data.frame(year=c(2000:2050)))
 
 lowerCI = 190
   for (i in 1:50) {lowerCI[i+1] = lowerCI[i] - netloss[i]}
@@ -82,15 +84,34 @@ gw_model = gw_df %>%
   mutate(outflow = predict(outflow_reg,data.frame(year=c(2000:2050)))) %>% 
   mutate(inflow = predict(inflow_reg,data.frame(year=c(2000:2050)))) %>%
   mutate(netloss = outflow-inflow) %>% 
-  mutate(reservoir_190 = lowerCI) %>% 
+  mutate(resevoir_190 = lowerCI) %>% 
   mutate(resevoir_350 = mean) %>% 
   mutate(resevoir_550 = upperCI)
 
 
 
-#View(gw_model)
 
 
+```
+
+
+```{r, echo=FALSE}
+
+line_comp = ggplot(gw_model, aes(x = year))+
+  geom_line(aes(y = resevoir_350, colour = "green"), size=1)+
+  geom_line(aes(y = resevoir_190, color = "b"), size=1)+
+  geom_line(aes(y = resevoir_550, color = "blue"), size=1)+
+  geom_line(aes(y = 0), linetype = "dashed")+
+  theme_classic()+
+  scale_color_grey()+
+  ylab(bquote("Groundwater Resources (billions m"^"3"*")"))+
+  xlab("Year")+
+  scale_y_continuous(expand = c(0,0))+
+  scale_x_continuous(expand = c(0,0.5))+
+  scale_color_discrete(name = "Scenario", labels = c("Lower Estimate", "Mean Estimate", "Upper Estimate"))
+  
+
+line_comp
 
 ```
 
